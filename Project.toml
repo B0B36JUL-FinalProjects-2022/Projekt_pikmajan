@@ -1,0 +1,7 @@
+name = "DecisionTrees"
+uuid = "24bdfa7e-30e5-4580-8c2f-6078a053d616"
+authors = ["Jan Pikman"]
+version = "0.1.0"
+
+[compat]
+julia = "1.8"
