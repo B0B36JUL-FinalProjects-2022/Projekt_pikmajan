@@ -1,18 +1,22 @@
 using DataStructures
+using StatsBase
 
 export learn!
 
-function learn!(dtree :: DecisionTree, X :: Matrix, Y :: Vector, depth :: Integer, lossfunction)
+function learn!(dtree :: DecisionTree, X :: Matrix, Y :: Vector,
+    ; depth :: Integer = Inf, attributecount :: Int = size(X, 2))
     dtree.maxdepth = depth
-    dtree.lossfunction = lossfunction
-    learn!(dtree.rootnode, X, Y, depth)    
+    learn!(dtree.rootnode, X, Y; depth, attributecount)    
 end
-function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector, depth :: Integer)
+function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
+    ; depth :: Integer = Inf, attributecount :: Int = size(X, 2))
     # Check inputs
     depth < 0 && error("Negative depth!")
     size(X, 1) == size(Y, 1) || error("Dimensional missmatch between X and Y!")
     # Init variables
-    paramindexes = eachindex(X[1, :])
+    paramindexes = collect(eachindex(X[1, :]))
+    paramindexes = sample(paramindexes, attributecount; replace=false)
+    println(paramindexes)
     # Leaf node
     if depth == 0 || entropy(Y) == 0
         dnode.nodetype = :leaf
@@ -58,8 +62,8 @@ function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector, depth :: Intege
     # Initialize and learn both leafs
     dnode.leftnode = DecisionNode()
     dnode.rightnode = DecisionNode()
-    learn!(dnode.leftnode, X[minmask, :], Y[minmask], depth - 1)
-    learn!(dnode.rightnode, X[.!minmask, :], Y[.!minmask], depth - 1)
+    learn!(dnode.leftnode, X[minmask, :], Y[minmask]; depth=depth-1, attributecount)
+    learn!(dnode.rightnode, X[.!minmask, :], Y[.!minmask]; depth=depth-1, attributecount)
     return
 end
 

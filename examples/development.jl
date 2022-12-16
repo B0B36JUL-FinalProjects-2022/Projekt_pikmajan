@@ -13,8 +13,9 @@ Y = [0, 1, 0, 1, 1]
 
 dt = DecisionTree()
 
-learn!(dt, X, Y, 1, nothing)
+learn!(dt, X, Y; depth=1, attributecount=1)
 
 dt
 
 evaluate(dt, X)
+

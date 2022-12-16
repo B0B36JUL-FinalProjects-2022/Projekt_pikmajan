@@ -3,12 +3,11 @@ export DecisionTree
 mutable struct DecisionTree
     # Tree parameters, mostly set after learning
     maxdepth :: Union{Nothing, Integer}
-    lossfunction
     # Root node
     rootnode :: DecisionNode
 
     function DecisionTree()
-        new(nothing, nothing, DecisionNode())
+        new(nothing, DecisionNode())
     end
 end
 
@@ -17,7 +16,6 @@ function tostring(dtree :: DecisionTree)
     return """
     Decision tree
         Maximal depth: $(dtree.maxdepth)
-        Loss function: $(dtree.lossfunction)
 
         Nodes:
             $nodestr"""
