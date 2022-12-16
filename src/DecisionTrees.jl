@@ -1,6 +1,7 @@
 module DecisionTrees
 
-include("DecisionNode.jl")
+include("node.jl")
 include("evaluate.jl")
+include("learn.jl")
 
 end
