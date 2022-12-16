@@ -1,8 +1,4 @@
 using Revise
 using DecisionTrees
 
-evaluate(12, 10)
-
-greet()
-
-learn()
+evaluate(:leaf, 12, 10)
