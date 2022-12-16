@@ -11,10 +11,10 @@ X = [
 Y = [0, 1, 0, 1, 1]
 
 
-dn = DecisionNode()
+dt = DecisionTree()
 
-learn!(dn, X, Y, 1)
+learn!(dt, X, Y, 2, nothing)
 
-dn
+dt
 
 evaluate(dn, X)

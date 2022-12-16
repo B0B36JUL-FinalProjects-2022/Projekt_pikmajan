@@ -2,6 +2,11 @@ using DataStructures
 
 export learn!
 
+function learn!(dtree :: DecisionTree, X :: Matrix, Y :: Vector, depth :: Integer, lossfunction)
+    dtree.maxdepth = depth
+    dtree.lossfunction = lossfunction
+    learn!(dtree.rootnode, X, Y, depth)    
+end
 function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector, depth :: Integer)
     # Check inputs
     depth < 0 && error("Negative depth!")

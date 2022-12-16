@@ -1,5 +1,6 @@
 export evaluate
 
+evaluate(dtree :: DecisionTree, X) = evaluate(dtree.dnode, X)
 evaluate(dnode :: DecisionNode, X :: Matrix) = [evaluate(dnode, X[i, :]) 
                                                 for i in 1:size(X, 1)]
 function evaluate(dnode :: DecisionNode, x :: Vector)

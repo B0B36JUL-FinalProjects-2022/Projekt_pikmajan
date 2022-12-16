@@ -18,7 +18,6 @@ mutable struct DecisionNode
 end
 
 function tostring(dnode :: DecisionNode; depth :: Integer = 0)
-    str = nothing
     if dnode.nodetype == :leaf
         # Show decision and confidence
         return """
@@ -27,12 +26,11 @@ function tostring(dnode :: DecisionNode; depth :: Integer = 0)
             $("    "^depth)Confidence: $(dnode.confidence)""" 
     end
     # Describe desicion and childrens
-    decisiontype = dnode.θ === nothing ? Bool : typeof(dnode.θ)
     leftstr = tostring(dnode.leftnode; depth=depth+1)
     rightstr = tostring(dnode.rightnode; depth=depth+1)
     return """
     Decision node
-        $("    "^depth)Type: $decisiontype
+        $("    "^depth)Type: $(dnode.nodetype)
         $("    "^depth)Parameter index: $(dnode.paramindex)
         $("    "^depth)θ: $(dnode.θ)
         
