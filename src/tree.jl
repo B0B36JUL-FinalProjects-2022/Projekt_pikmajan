@@ -1,4 +1,4 @@
-export DecisionTree
+export DecisionTree, learn!, evaluate
 
 mutable struct DecisionTree
     # Tree parameters, mostly set after learning
@@ -9,6 +9,14 @@ mutable struct DecisionTree
     function DecisionTree()
         new(nothing, DecisionNode())
     end
+end
+
+evaluate(dtree :: DecisionTree, X) = evaluate(dtree.rootnode, X)
+
+function learn!(dtree :: DecisionTree, X :: Matrix, Y :: Vector,
+    ; depth :: Integer = 1000, attributecount :: Int = size(X, 2))
+    dtree.maxdepth = depth
+    learn!(dtree.rootnode, X, Y; depth, attributecount)    
 end
 
 function tostring(dtree :: DecisionTree)
