@@ -87,7 +87,7 @@ deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.DecisionTrees]]
-deps = ["CSV", "DataFrames", "DataStructures", "ProgressMeter", "StatsBase"]
+deps = ["CSV", "DataFrames", "DataStructures", "ProgressMeter", "Random", "StatsBase"]
 path = ".."
 uuid = "24bdfa7e-30e5-4580-8c2f-6078a053d616"
 version = "0.1.0"

@@ -25,30 +25,13 @@ learn!(dt, X, Y; depth=21)
 Y_ = evaluate(dt, X)
 mean(Y .!= Y_)
 
-shuffledidxs = shuffle(collect(1:size(X, 1)))
-Xshf = X[shuffledidxs, :]
-Yshf = Y[shuffledidxs]
-
-trainproportion = 0.8
-traincount = round(Integer, trainproportion * size(Xshf, 1))
-testcount = size(Xshf, 1) - traincount
-
-Xtrain = X[begin:traincount, :]
-Ytrain = Y[begin:traincount]
-Xtest = X[traincount+1:end, :]
-Ytest = Y[traincount+1:end]
 
 n = 10
 depths = collect(1:20)
 errordepths = zeros(length(depths))
 @showprogress for j in 1:n
-    shuffledidxs = shuffle(collect(1:size(X, 1)))
-    Xshf = X[shuffledidxs, :]
-    Yshf = Y[shuffledidxs]
-    Xtrain = X[begin:traincount, :]
-    Ytrain = Y[begin:traincount]
-    Xtest = X[traincount+1:end, :]
-    Ytest = Y[traincount+1:end]
+    Xshf, Yshf = shuffledata(X, Y)
+    Xtrain, Ytrain, Xtest, Ytest = splitdata(X, Y)
     for i in 1:20
         dt = DecisionTree()
         learn!(dt, Xtrain, Ytrain; depth=depths[i], attributecount=2)
@@ -65,13 +48,8 @@ n = 100
 attributes = collect(1:9)
 errorattributes = zeros(length(attributes))
 @showprogress for j in 1:n
-    shuffledidxs = shuffle(collect(1:size(X, 1)))
-    Xshf = X[shuffledidxs, :]
-    Yshf = Y[shuffledidxs]
-    Xtrain = X[begin:traincount, :]
-    Ytrain = Y[begin:traincount]
-    Xtest = X[traincount+1:end, :]
-    Ytest = Y[traincount+1:end]
+    Xshf, Yshf = shuffledata(X, Y)
+    Xtrain, Ytrain, Xtest, Ytest = splitdata(X, Y)
     for i in 1:9
         dt = DecisionTree()
         learn!(dt, Xtrain, Ytrain; depth=10, attributecount=attributes[i])

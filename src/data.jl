@@ -1,5 +1,6 @@
 using CSV
 using DataFrames
+using Random
 
 export csv2matrix, reformatmatrix
 
@@ -25,4 +26,20 @@ function reformatmatrix(X :: Matrix, types :: Vector{DataType}, defaultvalue :: 
         end
     end
     return X_
+end
+
+function shuffledata(X :: Matrix, Y :: Vector)
+    shuffledidxs = shuffle(collect(1:size(X, 1)))
+    Xshf = X[shuffledidxs, :]
+    Yshf = Y[shuffledidxs]
+    return Xshf, Yshf
+end
+
+function splitdata(X :: Matrix, Y :: Vector; proportion=0.8)
+    trainsize = round(Integer, proportion * size(Xshf, 1))
+    Xtrain = X[begin:trainsize, :]
+    Ytrain = Y[begin:trainsize, :]
+    Xtest = X[trainsize+1:end, :]
+    Ytest = Y[trainsize+1:end, :]
+    return Xtrain, Ytrain, Xtest, Ytest
 end
