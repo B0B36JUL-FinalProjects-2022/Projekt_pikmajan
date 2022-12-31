@@ -13,7 +13,7 @@ X = [
 Y = [0, 1, 0, 1, 1]
 
 dt = DecisionTree()
-learn!(dt, X, Y; depth=1, attributecount=1)
+learn!(dt, X, Y; depth=2, attributecount=1)
 dt
 Y_ = evaluate(dt, X)
 mean(Y .== Y_)

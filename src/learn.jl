@@ -69,6 +69,5 @@ function informationgain(Y, mask)
     Y2 = Y[.!mask]
     h1 = entropy(Y1)
     h2 = entropy(Y2)
-    return (length(Y1) / length(Y)) * h1 + (length(Y2) / length(Y)) * h2
-    return 0.0    
+    return (length(Y1) / length(Y)) * h1 + (length(Y2) / length(Y)) * h2  
 end
