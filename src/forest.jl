@@ -24,18 +24,18 @@ end
 
 
 function learn!(rforest :: RandomForest, X :: Matrix, Y :: Vector
-    ; depth :: Integer = 1000, attributecount :: Int = size(X, 2), 
+    ; depth :: Integer = 1000, attribute_count :: Int = size(X, 2), 
       bagging :: Bool = false)
     if bagging
         idxs = [sample(1:size(X, 1), size(X, 1); replace=true) 
                 for i in 1:rforest.size]
         Xs = [X[idx, :] for idx in idxs]
         @showprogress for i in eachindex(rforest.dtrees)
-            learn!(rforest.dtrees[i], Xs[i], Y; depth, attributecount)
+            learn!(rforest.dtrees[i], Xs[i], Y; depth, attribute_count)
         end
     else
         @showprogress for i in eachindex(rforest.dtrees)
-            learn!(rforest.dtrees[i], X, Y; depth, attributecount)
+            learn!(rforest.dtrees[i], X, Y; depth, attribute_count)
         end
     end
     return

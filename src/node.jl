@@ -1,15 +1,15 @@
 export DecisionNode, learn!, evaluate
 
 mutable struct DecisionNode
-    nodetype :: Symbol
+    node_type :: Symbol
     # Possible leaf value
     decision
     confidence :: Union{Nothing, Real}
     # Childrens
-    leftnode :: Union{Nothing, DecisionNode}
-    rightnode :: Union{Nothing, DecisionNode}
+    left_node :: Union{Nothing, DecisionNode}
+    right_node :: Union{Nothing, DecisionNode}
     # Decision making parameters
-    paramindex :: Union{Nothing, Integer}
+    param_index :: Union{Nothing, Integer}
     θ :: Union{Nothing, AbstractString, Real, Bool}
     
     function DecisionNode()
@@ -20,34 +20,34 @@ end
 evaluate(dnode :: DecisionNode, X :: Matrix) = [evaluate(dnode, X[i, :]) 
                                                 for i in 1:size(X, 1)]
 function evaluate(dnode :: DecisionNode, x :: Vector)
-    dnode.nodetype == :leaf && return dnode.decision
-    return evaluate(dnode, x[dnode.paramindex]) ? 
-           evaluate(dnode.leftnode, x) : evaluate(dnode.rightnode, x)
+    dnode.node_type == :leaf && return dnode.decision
+    return evaluate(dnode, x[dnode.param_index]) ? 
+           evaluate(dnode.left_node, x) : evaluate(dnode.right_node, x)
 end
 
 evaluate(dnode :: DecisionNode, x :: Real) = x <= dnode.θ
 evaluate(dnode :: DecisionNode, x :: Bool) = x
 function evaluate(dnode :: DecisionNode, x :: AbstractString) 
-    if dnode.nodetype == :stringequality
+    if dnode.node_type == :stringequality
         return x == dnode.θ
     end
-    if dnode.nodetype == :stringinequality
+    if dnode.node_type == :stringinequality
         return x <= dnode.θ
     end
-    throw(ArgumentError("Argument nodetype does not exist!"))
+    throw(ArgumentError("Argument node_type does not exist!"))
 end
 
 function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
-    ; depth :: Integer = 1000, attributecount :: Int = size(X, 2))
+    ; depth :: Integer = 1000, attribute_count :: Int = size(X, 2))
     # Check inputs
     depth < 0 && error("Negative depth!")
     size(X, 1) == size(Y, 1) || error("Dimensional missmatch between X and Y!")
     # Init variables
-    paramindexes = collect(eachindex(X[1, :]))
-    paramindexes = sample(paramindexes, attributecount; replace=false)
+    param_indexes = collect(eachindex(X[1, :]))
+    param_indexes = sample(param_indexes, attribute_count; replace=false)
     # Leaf node
     if depth == 0 || entropy(Y) == 0
-        dnode.nodetype = :leaf
+        dnode.node_type = :leaf
         # Set decision as most frequent label
         counts = counter(Y)
         keys = [i for i in eachindex(counts)]
@@ -57,25 +57,25 @@ function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
         return
     end
     # Pick optimal split
-    minindex = 1
-    minval = Inf
-    minθ = nothing
-    minmask = nothing
-    minsymbol = :leaf
-    for paramindex in paramindexes
-        val, θ, mask, symbol = bestsplit(X[:, paramindex], Y, X[1, paramindex])
-        if val < minval
-            minindex = paramindex
-            minval = val
-            minθ = θ
-            minmask = mask
-            minsymbol = symbol
+    min_index = 1
+    min_val = Inf
+    min_θ = nothing
+    min_mask = nothing
+    min_symbol = :leaf
+    for param_index in param_indexes
+        val, θ, mask, symbol = best_split(X[:, param_index], Y, X[1, param_index])
+        if val < min_val
+            min_index = param_index
+            min_val = val
+            min_θ = θ
+            min_mask = mask
+            min_symbol = symbol
         end
     end
-    dnode.nodetype = minsymbol
+    dnode.node_type = min_symbol
     # Case when no split exists that could separate different labels
-    if minval == Inf
-        dnode.nodetype = :leaf
+    if min_val == Inf
+        dnode.node_type = :leaf
         # Set decision as most frequent label
         counts = counter(Y)
         keys = [i for i in eachindex(counts)]
@@ -85,18 +85,18 @@ function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
         return
     end
     # Learn optimal split
-    dnode.paramindex = minindex
-    dnode.θ = minθ
+    dnode.param_index = min_index
+    dnode.θ = min_θ
     # Initialize and learn both leafs
-    dnode.leftnode = DecisionNode()
-    dnode.rightnode = DecisionNode()
-    learn!(dnode.leftnode, X[minmask, :], Y[minmask]; depth=depth-1, attributecount)
-    learn!(dnode.rightnode, X[.!minmask, :], Y[.!minmask]; depth=depth-1, attributecount)
+    dnode.left_node = DecisionNode()
+    dnode.right_node = DecisionNode()
+    learn!(dnode.left_node, X[min_mask, :], Y[min_mask]; depth=depth-1, attribute_count)
+    learn!(dnode.right_node, X[.!min_mask, :], Y[.!min_mask]; depth=depth-1, attribute_count)
     return
 end
 
-function tostring(dnode :: DecisionNode; depth :: Integer = 0)
-    if dnode.nodetype == :leaf
+function to_string(dnode :: DecisionNode; depth :: Integer = 0)
+    if dnode.node_type == :leaf
         # Show decision and confidence
         return """
         Leaf node:  
@@ -104,12 +104,12 @@ function tostring(dnode :: DecisionNode; depth :: Integer = 0)
             $("    "^depth)Confidence: $(dnode.confidence)""" 
     end
     # Describe desicion and childrens
-    leftstr = tostring(dnode.leftnode; depth=depth+1)
-    rightstr = tostring(dnode.rightnode; depth=depth+1)
+    leftstr = to_string(dnode.left_node; depth=depth+1)
+    rightstr = to_string(dnode.right_node; depth=depth+1)
     return """
     Decision node
-        $("    "^depth)Type: $(dnode.nodetype)
-        $("    "^depth)Parameter index: $(dnode.paramindex)
+        $("    "^depth)Type: $(dnode.node_type)
+        $("    "^depth)Parameter index: $(dnode.param_index)
         $("    "^depth)θ: $(dnode.θ)
         
         $("    "^depth)$leftstr
@@ -117,5 +117,5 @@ function tostring(dnode :: DecisionNode; depth :: Integer = 0)
 end
 
 function Base.show(io :: IO, dnode :: DecisionNode)
-    print(io, "$(tostring(dnode))")
+    print(io, "$(to_string(dnode))")
 end

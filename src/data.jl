@@ -2,21 +2,21 @@ using CSV
 using DataFrames
 using Random
 
-export csv2matrix, reformatdata, shuffledata, splitdata
+export csv_to_matrix, reformat_data, shuffle_data, split_data
 
-function csv2matrix(path :: String)
+function csv_to_matrix(path :: String)
     df = CSV.read(path, DataFrame)
     return Matrix(df)
 end
 
-function reformatdata(X :: Matrix, types :: Vector{DataType}, defaultvalue :: Vector)
+function reformat_data(X :: Matrix, types :: Vector{DataType}, default_value :: Vector)
     # Check if arguments have same size
     println(size(X, 2))
-    size(X, 2) == length(types) == length(defaultvalue) || throw(AssertionError("Wrong argument size!"))
+    size(X, 2) == length(types) == length(default_value) || throw(AssertionError("Wrong argument size!"))
     X_ = X
     for i in 1:size(X, 2)
-        missingmask = X_[:, i] .=== missing
-        X_[missingmask, i] .= defaultvalue[i]
+        missing_mask = X_[:, i] .=== missing
+        X_[missing_mask, i] .= default_value[i]
         if types[i] <: String
             X_[:, i] .= string.(X[:, i])
         elseif types[i] <: Integer       
@@ -28,18 +28,18 @@ function reformatdata(X :: Matrix, types :: Vector{DataType}, defaultvalue :: Ve
     return X_
 end
 
-function shuffledata(X :: Matrix, Y :: Vector)
-    shuffledidxs = shuffle(collect(1:size(X, 1)))
-    Xshf = X[shuffledidxs, :]
-    Yshf = Y[shuffledidxs]
-    return Xshf, Yshf
+function shuffle_data(X :: Matrix, Y :: Vector)
+    shuffled_idxs = shuffle(collect(1:size(X, 1)))
+    X_shf = X[shuffled_idxs, :]
+    Y_shf = Y[shuffled_idxs]
+    return X_shf, Y_shf
 end
 
-function splitdata(X :: Matrix, Y :: Vector; proportion=0.8)
-    trainsize = round(Integer, proportion * size(X, 1))
-    Xtrain = X[begin:trainsize, :]
-    Ytrain = Y[begin:trainsize, :]
-    Xtest = X[trainsize+1:end, :]
-    Ytest = Y[trainsize+1:end, :]
-    return Xtrain, vec(Ytrain), Xtest, vec(Ytest)
+function split_data(X :: Matrix, Y :: Vector; proportion=0.8)
+    train_size = round(Integer, proportion * size(X, 1))
+    X_train = X[begin:train_size, :]
+    Y_train = Y[begin:train_size, :]
+    X_test = X[train_size+1:end, :]
+    Y_test = Y[train_size+1:end, :]
+    return X_train, vec(Y_train), X_test, vec(Y_test)
 end

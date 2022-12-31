@@ -1,57 +1,57 @@
 using DataStructures
 using StatsBase
 
-function bestsplit(X, Y, sample :: AbstractString)
+function best_split(X, Y, sample :: AbstractString)
     # Get all possible String values
     strings = unique(X)
     # Go through all possible split functions
-    minig = Inf
-    minθ = nothing
-    minmask = nothing
-    minsymbol = :leaf
+    min_ig = Inf
+    min_θ = nothing
+    min_mask = nothing
+    min_symbol = :leaf
     for s in strings
         mask = evaluate.(:stringequality, s, X)
-        ig = informationgain(Y, mask)
-        if ig < minig
-            minig = ig
-            minθ = s
-            minmask = mask
-            minsymbol = :stringequality
+        ig = information_gain(Y, mask)
+        if ig < min_ig
+            min_ig = ig
+            min_θ = s
+            min_mask = mask
+            min_symbol = :stringequality
         end
         mask = evaluate.(:stringinequality, s, X)
-        ig = informationgain(Y, mask)
-        if ig < minig
-            minig = ig
-            minθ = s
-            minmask = mask
-            minsymbol = :stringinequality
+        ig = information_gain(Y, mask)
+        if ig < min_ig
+            min_ig = ig
+            min_θ = s
+            min_mask = mask
+            min_symbol = :stringinequality
         end
     end
-    return minig, minθ, minmask, minsymbol
+    return min_ig, min_θ, min_mask, min_symbol
 end
-function bestsplit(X, Y, sample :: Real)   
-    # Get all possible String values
-    sortedX = sort(X)
-    reals = (sortedX[begin:end-1] .+ sortedX[begin+1:end]) ./ 2
+function best_split(X, Y, sample :: Real)   
+    # Get all real values inbetween all present samples
+    sorted_X = sort(X)
+    reals = (sorted_X[begin:end-1] .+ sorted_X[begin+1:end]) ./ 2
     # Go through all possible split functions
-    minig = Inf
-    minθ = nothing
-    minmask = nothing
+    min_ig = Inf
+    min_θ = nothing
+    min_mask = nothing
     for r in reals
         mask = evaluate.(:leaf, r, X)
-        ig = informationgain(Y, mask)
-        if ig < minig
-            minig = ig
-            minθ = r
-            minmask = mask
+        ig = information_gain(Y, mask)
+        if ig < min_ig
+            min_ig = ig
+            min_θ = r
+            min_mask = mask
         end
     end
-    return minig, minθ, minmask, :real
+    return min_ig, min_θ, min_mask, :real
 end
-function bestsplit(X, Y, sample :: Bool)
+function best_split(X, Y, sample :: Bool)
     mask = evaluate.(:leaf, nothing, X)
-    minig = informationgain(Y, mask)
-    return minig, nothing, mask, :bool
+    min_ig = information_gain(Y, mask)
+    return min_ig, nothing, mask, :bool
 end
 
 
@@ -64,7 +64,7 @@ function entropy(Y)
     ))
 end
 
-function informationgain(Y, mask)
+function information_gain(Y, mask)
     Y1 = Y[mask]
     Y2 = Y[.!mask]
     h1 = entropy(Y1)
