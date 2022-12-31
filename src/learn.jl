@@ -1,10 +1,17 @@
 using DataStructures
 using StatsBase
 
+"""
+    best_split(X, Y, sample :: AbstractString)
+
+Function returns best splitting point for AbstractString feature vector 
+based on information gain maximization.
+"""
 function best_split(X, Y, sample :: AbstractString)
     # Get all possible String values
     strings = unique(X)
     # Go through all possible split functions
+    # Find minimum split
     min_ig = Inf
     min_θ = nothing
     min_mask = nothing
@@ -29,6 +36,13 @@ function best_split(X, Y, sample :: AbstractString)
     end
     return min_ig, min_θ, min_mask, min_symbol
 end
+
+"""
+    best_split(X, Y, sample :: Real)
+
+Function returns best splitting point for Real feature vector 
+based on information gain maximization.
+"""
 function best_split(X, Y, sample :: Real)   
     # Get all real values inbetween all present samples
     sorted_X = sort(X)
@@ -48,13 +62,24 @@ function best_split(X, Y, sample :: Real)
     end
     return min_ig, min_θ, min_mask, :real
 end
+
+"""
+    best_split(X, Y, sample :: Bool)
+
+Function returns best splitting point for Bool feature vector 
+based on information gain maximization.
+"""
 function best_split(X, Y, sample :: Bool)
     mask = evaluate.(:leaf, nothing, X)
     min_ig = information_gain(Y, mask)
     return min_ig, nothing, mask, :bool
 end
 
+"""
+    entropy(Y)
 
+Computes entropy of given class vector.
+"""
 function entropy(Y)
     length(Y) == 0 && return Inf
     counts = counter(Y)
@@ -64,6 +89,12 @@ function entropy(Y)
     ))
 end
 
+"""
+    information_gain(Y, mask)
+
+Computes information gain of given class vector corresponding to its division
+according to provided boolean mask vector. 
+"""
 function information_gain(Y, mask)
     Y1 = Y[mask]
     Y2 = Y[.!mask]
