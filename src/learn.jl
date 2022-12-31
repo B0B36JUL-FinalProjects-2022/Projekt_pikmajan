@@ -90,12 +90,12 @@ function entropy(Y)
 end
 
 """
-    information_gain(Y, mask)
+    information_gain(Y, mask :: BitVector)
 
 Computes information gain of given class vector corresponding to its division
 according to provided boolean mask vector. 
 """
-function information_gain(Y, mask)
+function information_gain(Y, mask :: BitVector)
     Y1 = Y[mask]
     Y2 = Y[.!mask]
     h1 = entropy(Y1)

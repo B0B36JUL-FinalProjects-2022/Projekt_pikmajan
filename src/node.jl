@@ -5,7 +5,7 @@ mutable struct DecisionNode
     # Possible leaf value
     decision
     confidence :: Union{Nothing, Real}
-    # Childrens
+    # Children
     left_node :: Union{Nothing, DecisionNode}
     right_node :: Union{Nothing, DecisionNode}
     # Decision making parameters
@@ -17,26 +17,48 @@ mutable struct DecisionNode
     end
 end
 
+# ========================================
+# evaluate
+
+"""
+    evaluate(dnode :: DecisionNode, X :: Matrix)
+    
+Returns vector of predictions corresponding to feature vectors in input matrix.
+"""
 evaluate(dnode :: DecisionNode, X :: Matrix) = [evaluate(dnode, X[i, :]) 
                                                 for i in 1:size(X, 1)]
+
+"""
+    evaluate(dnode :: DecisionNode, x :: Vector)
+
+Returns prediction assigned in leaf node of current `DecisionNode`.
+This is acomplished by recursively evaluating child decision nodes.
+"""
 function evaluate(dnode :: DecisionNode, x :: Vector)
     dnode.node_type == :leaf && return dnode.decision
     return evaluate(dnode, x[dnode.param_index]) ? 
            evaluate(dnode.left_node, x) : evaluate(dnode.right_node, x)
 end
 
-evaluate(dnode :: DecisionNode, x :: Real) = x <= dnode.θ
-evaluate(dnode :: DecisionNode, x :: Bool) = x
-function evaluate(dnode :: DecisionNode, x :: AbstractString) 
-    if dnode.node_type == :stringequality
-        return x == dnode.θ
-    end
-    if dnode.node_type == :stringinequality
-        return x <= dnode.θ
-    end
-    throw(ArgumentError("Argument node_type does not exist!"))
-end
+"""
+    evaluate(dnode :: DecisionNode, x :: Union{Real, Bool, AbstractString})
 
+Returns boolean to which the `DecisionNode` evaluates.
+"""
+evaluate(dnode :: DecisionNode, x :: Union{Real, Bool, AbstractString}) = evaluate(dnode.node_type, dnode.θ, x)
+
+# ========================================
+# learn!
+
+"""
+    learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector; depth :: Integer = 1000, attribute_count :: Int = size(X, 2))
+
+Recursively builds tree of `DecisionNode`s. 
+Split decisions are selected by maximising information gain.
+Keyword argument `depth` limits maximal depth of created tree.
+Keyword argument `attribute_count` sets the number of randomly sampled 
+attributes which are considered while searching for optimal split.
+"""
 function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
     ; depth :: Integer = 1000, attribute_count :: Int = size(X, 2))
     # Check inputs
@@ -95,6 +117,14 @@ function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
     return
 end
 
+# ========================================
+# to_string
+
+"""
+    to_string(dnode :: DecisionNode; depth :: Integer = 0)
+
+Converts `DecisionNode` to string and recursively also its children.
+"""
 function to_string(dnode :: DecisionNode; depth :: Integer = 0)
     if dnode.node_type == :leaf
         # Show decision and confidence
@@ -103,7 +133,7 @@ function to_string(dnode :: DecisionNode; depth :: Integer = 0)
             $("    "^depth)Decision: $(dnode.decision)  
             $("    "^depth)Confidence: $(dnode.confidence)""" 
     end
-    # Describe desicion and childrens
+    # Describe desicion and children
     leftstr = to_string(dnode.left_node; depth=depth+1)
     rightstr = to_string(dnode.right_node; depth=depth+1)
     return """
@@ -116,6 +146,14 @@ function to_string(dnode :: DecisionNode; depth :: Integer = 0)
         $("    "^depth)$rightstr"""
 end
 
+# ========================================
+# Base.show
+
+"""
+    Base.show(io :: IO, dnode :: DecisionNode)
+
+Show function for `DecisionNode` using `to_string` function.
+"""
 function Base.show(io :: IO, dnode :: DecisionNode)
     print(io, "$(to_string(dnode))")
 end
