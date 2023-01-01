@@ -30,4 +30,4 @@ these are included in file [data.jl](https://github.com/B0B36JUL-FinalProjects-2
 Examples are provided in example folder.
 General use of package is briefly described in file [examples/usage.ipynb]().
 Various models implemented in the package are then used for solving
-the Titanic classification task in file [titanic.ipynb]().
+the Titanic classification task in file [examples/titanic.ipynb]().
