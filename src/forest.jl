@@ -135,8 +135,9 @@ function learn!(rforest :: RandomForest, X :: Matrix, Y :: Vector
         idxs = [sample(1:size(X, 1), size(X, 1); replace=true) 
                 for i in 1:rforest.size]
         Xs = [X[idx, :] for idx in idxs]
+        Ys = [Y[idx, :] for idx in idxs]
         @showprogress for i in eachindex(rforest.dtrees)
-            learn!(rforest.dtrees[i], Xs[i], Y; depth, attribute_count)
+            learn!(rforest.dtrees[i], Xs[i], Ys[i]; depth, attribute_count)
         end
     else
         @showprogress for i in eachindex(rforest.dtrees)

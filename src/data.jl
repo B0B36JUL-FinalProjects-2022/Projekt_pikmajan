@@ -20,10 +20,14 @@ end
 Changes types of data columns presented in matrix `X` to be the same type 
 as specified in the `types` vector.
 `missing` values are filled with corresponding `default_value`.
+
+# Warning:
+
+The function is not tested for all possible type convertion combinations!
+Some specific type combinations might raise errors.
 """
 function reformat_data(X :: Matrix, types :: Vector{DataType}, default_value :: Vector)
     # Check if arguments have same size
-    println(size(X, 2))
     size(X, 2) == length(types) == length(default_value) || throw(AssertionError("Wrong argument size!"))
     X_ = X
     for i in 1:size(X, 2)
