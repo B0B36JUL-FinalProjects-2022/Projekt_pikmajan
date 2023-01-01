@@ -149,11 +149,6 @@ end
 # ========================================
 # Base.show
 
-"""
-    Base.show(io :: IO, dnode :: DecisionNode)
-
-Show function for `DecisionNode` using `to_string` function.
-"""
 function Base.show(io :: IO, dnode :: DecisionNode)
     print(io, "$(to_string(dnode))")
 end
