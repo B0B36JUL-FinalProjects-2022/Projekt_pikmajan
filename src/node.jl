@@ -121,11 +121,13 @@ end
 # to_string
 
 """
-    to_string(dnode :: DecisionNode; depth :: Integer = 0)
+    to_string(dnode :: DecisionNode; depth :: Integer = 0, max_depth :: Integer = 4)
 
 Converts `DecisionNode` to string and recursively also its children.
+Keyword argument `max_depth` limits the depth of displayed `DecisionNode`s
+to limit the terminal noise.
 """
-function to_string(dnode :: DecisionNode; depth :: Integer = 0)
+function to_string(dnode :: DecisionNode; depth :: Integer = 0, max_depth :: Integer = 4)
     if dnode.node_type == :leaf
         # Show decision and confidence
         return """
@@ -134,8 +136,8 @@ function to_string(dnode :: DecisionNode; depth :: Integer = 0)
             $("    "^depth)Confidence: $(dnode.confidence)""" 
     end
     # Describe desicion and children
-    leftstr = to_string(dnode.left_node; depth=depth+1)
-    rightstr = to_string(dnode.right_node; depth=depth+1)
+    leftstr = depth <= max_depth ? to_string(dnode.left_node; depth=depth+1) : "..."
+    rightstr = depth <= max_depth ? to_string(dnode.right_node; depth=depth+1) : "..."
     return """
     Decision node
         $("    "^depth)Type: $(dnode.node_type)

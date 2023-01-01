@@ -3,11 +3,12 @@ export DecisionTree, learn!, evaluate
 mutable struct DecisionTree
     # Tree parameters, mostly set after learning
     max_depth :: Union{Nothing, Integer}
+    attribute_count :: Union{Nothing, Integer}
     # Root node
     root_node :: DecisionNode
 
     function DecisionTree()
-        new(nothing, DecisionNode())
+        new(nothing, nothing, DecisionNode())
     end
 end
 
@@ -39,6 +40,7 @@ julia> Y_ = evaluate(dt, X)
  0
  1
  1
+
 ```
 """
 evaluate(dtree :: DecisionTree, X) = evaluate(dtree.root_node, X)
@@ -106,11 +108,13 @@ Decision tree
         Leaf node:
             Decision: 1
             Confidence: 1.0
+
 ```
 """
 function learn!(dtree :: DecisionTree, X :: Matrix, Y :: Vector,
     ; depth :: Integer = 1000, attribute_count :: Int = size(X, 2))
     dtree.max_depth = depth
+    dtree.attribute_count = attribute_count
     learn!(dtree.root_node, X, Y; depth, attribute_count)    
 end
 
@@ -141,6 +145,7 @@ Decision tree
         Leaf node:
             Decision: 1
             Confidence: 1.0
+
 ```
 """
 function to_string(dtree :: DecisionTree)
@@ -148,6 +153,7 @@ function to_string(dtree :: DecisionTree)
     return """
     Decision tree
         Maximal depth: $(dtree.max_depth)
+        Attribute count: $(dtree.attribute_count)
 
         Nodes:
             $node_str"""
