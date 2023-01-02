@@ -129,19 +129,23 @@ Random Forest
 """
 function learn!(rforest :: RandomForest, X :: Matrix, Y :: Vector
     ; depth :: Integer = 1000, attribute_count :: Int = size(X, 2), 
-      bagging :: Bool = false)
+      bagging :: Bool = false, show_progress :: Bool = true)
     rforest.bagging = bagging
     if bagging
         idxs = [sample(1:size(X, 1), size(X, 1); replace=true) 
                 for i in 1:rforest.size]
         Xs = [X[idx, :] for idx in idxs]
         Ys = [Y[idx] for idx in idxs]
-        @showprogress for i in eachindex(rforest.dtrees)
+        prg = Progress(rforest.size; enabled=show_progress)
+        for i in eachindex(rforest.dtrees)
             learn!(rforest.dtrees[i], Xs[i], Ys[i]; depth, attribute_count)
+            next!(prg)
         end
     else
-        @showprogress for i in eachindex(rforest.dtrees)
+        prg = Progress(rforest.size; enabled=show_progress)
+        for i in eachindex(rforest.dtrees)
             learn!(rforest.dtrees[i], X, Y; depth, attribute_count)
+            next!(prg)
         end
     end
     return
