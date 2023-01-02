@@ -28,6 +28,6 @@ these are included in file [data.jl](https://github.com/B0B36JUL-FinalProjects-2
 ## Usage and examples
 
 Examples are provided in example folder.
-General use of package is briefly described in file [examples/usage.ipynb]().
+General use of package is briefly described in file [examples/usage.ipynb](https://github.com/B0B36JUL-FinalProjects-2022/Projekt_pikmajan/blob/81266e839b22b82c676c7d48cd5c9e003b9ce5ca/examples/usage.ipynb).
 Various models implemented in the package are then used for solving
-the Titanic classification task in file [examples/titanic.ipynb]().
+the Titanic classification task in file [examples/titanic.ipynb](https://github.com/B0B36JUL-FinalProjects-2022/Projekt_pikmajan/blob/81266e839b22b82c676c7d48cd5c9e003b9ce5ca/examples/titanic.ipynb).
