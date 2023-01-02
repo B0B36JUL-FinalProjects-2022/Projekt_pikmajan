@@ -66,7 +66,9 @@ function learn!(dnode :: DecisionNode, X :: Matrix, Y :: Vector,
     size(X, 1) == size(Y, 1) || error("Dimensional missmatch between X and Y!")
     # Init variables
     param_indexes = collect(eachindex(X[1, :]))
-    param_indexes = sample(param_indexes, attribute_count; replace=false)
+    if attribute_count != size(X, 2)
+        param_indexes = sample(param_indexes, attribute_count; replace=false)
+    end
     # Leaf node
     if depth == 0 || entropy(Y) == 0
         dnode.node_type = :leaf
