@@ -4,26 +4,6 @@ using Test
 using Statistics
 
 @testset "DecisionTrees.jl" begin
-    @testset "evaluate.jl" begin
-        @test evaluate(:nothing, 0, 0) == true
-        @test evaluate(:nothing, -1, 0) == false
-        @test evaluate(:nothing, 1, 0) == true
-
-        @test evaluate(:nothing, 0.3, 0.3) == true
-        @test evaluate(:nothing, -0.3, 0.3) == false
-        @test evaluate(:nothing, 0.6, 0.3) == true
-
-        @test evaluate(:nothing, nothing, true) == true
-        @test evaluate(:nothing, nothing, false) == false
-
-        @test evaluate(:stringequality, "a", "a") == true
-        @test evaluate(:stringequality, "a", "b") == false
-        @test evaluate(:stringequality, "b", "a") == false
-
-        @test evaluate(:stringinequality, "a", "a") == true
-        @test evaluate(:stringinequality, "a", "b") == false
-        @test evaluate(:stringinequality, "b", "a") == true
-    end
 
     @testset "learn.jl" begin
         
@@ -71,11 +51,32 @@ using Statistics
         dn_right.confidence = 1.0
         dnode_.left_node = dn_left
         dnode_.right_node = dn_right
+        
         @testset "learn!" begin
             learn!(dnode, X, Y)
             @test DecisionTrees.to_string(dnode) == DecisionTrees.to_string(dnode_)
         end
+
         @testset "evaluate" begin
+            @test evaluate(:nothing, 0, 0) == true
+            @test evaluate(:nothing, -1, 0) == false
+            @test evaluate(:nothing, 1, 0) == true
+    
+            @test evaluate(:nothing, 0.3, 0.3) == true
+            @test evaluate(:nothing, -0.3, 0.3) == false
+            @test evaluate(:nothing, 0.6, 0.3) == true
+    
+            @test evaluate(:nothing, nothing, true) == true
+            @test evaluate(:nothing, nothing, false) == false
+    
+            @test evaluate(:stringequality, "a", "a") == true
+            @test evaluate(:stringequality, "a", "b") == false
+            @test evaluate(:stringequality, "b", "a") == false
+    
+            @test evaluate(:stringinequality, "a", "a") == true
+            @test evaluate(:stringinequality, "a", "b") == false
+            @test evaluate(:stringinequality, "b", "a") == true
+            
             Y_ = evaluate(dnode, X)
             Y__ = evaluate(dnode_, X)
             @test Y == Y_ == Y__
